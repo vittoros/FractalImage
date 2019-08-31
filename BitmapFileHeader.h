@@ -13,7 +13,7 @@
 #pragma pack(push, 1)
 
 struct BitmapFileHeader {
-	uint16_t file_type{ 0x4D42 };
+	uint16_t file_type{ 0x4D42 };	// 'BM' in little-endian format
 	uint32_t fileSize{ 0 };
 	uint16_t reserved1{ 0 };
 	uint16_t reserved2{ 0 };

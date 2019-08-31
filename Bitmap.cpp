@@ -4,7 +4,7 @@
 #include "BitmapInfoHeader.h"
 #include <fstream>
 
-// Constructor
+// Constructor - Create a BMP image in memory
 Bitmap::Bitmap(int width, int height): m_width(width), m_height(height), m_pPixels(std::make_unique<uint8_t[]>(width * height * 3)) {
 		
 }
@@ -46,5 +46,13 @@ bool Bitmap::write(std::string filename) {
 // -------------------------------------------------------------
 // Modify the pixel data
 void Bitmap::setPixel(int col, int row, uint8_t red, uint8_t green, uint8_t blue) {
+	uint8_t* pPixel = m_pPixels.get();
 
+	pPixel += (row * m_width + col) * 3;
+
+	// little-endian format
+	pPixel[0] = blue;
+	pPixel[1] = green;
+	pPixel[2] = red;
 }
+
