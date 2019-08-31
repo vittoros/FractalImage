@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <cstdint>
+#include <math.h>
 
 #include "Bitmap.h"
 #include "Mandelbrot.h"
@@ -11,18 +12,37 @@ int main() {
 	Bitmap bitmap(WIDTH, HEIGHT);
 	Mandelbrot mandelbrot(WIDTH, HEIGHT);
 
-	// Set bottom left as red
+	// --------------------------------------
+	// Apply the mandelbrot algorithm 
 	for (int x = 0; x < WIDTH; x++) {
 		for (int y = 0; y < HEIGHT; y++) {
-			uint8_t color = static_cast<uint8_t>(256 * mandelbrot.MandelbrotSet(x, y));
+			mandelbrot.MandelbrotSet(x, y);
+		}
+	}
 
-			bitmap.setPixel(x, y, 0, color, 0);
+	// --------------------------------------
+	// Apply the histogram coloring technique
+	int* fractal = mandelbrot.getFractal();
+	int* histogram = mandelbrot.getHistogram();
+	int total = mandelbrot.getSumHistogram();
+	for (int x = 0; x < WIDTH; x++) {
+		for (int y = 0; y < HEIGHT; y++) {
+			int iteration = fractal[y * WIDTH + x];
+
+			double hue = 0;
+			for (int i = 0; i <= iteration; i++)
+				hue += histogram[i] / (double)total;
+
+			uint8_t red;
+			uint8_t green = pow(255, hue);
+			uint8_t blue;
+
+			bitmap.setPixel(x, y, 0, green, 0);
 		}
 	}
 
 	bitmap.write("test.bmp");
-
-	//std::cout << "Test bitmap written!" << std::endl;
+	std::cout << "Test bitmap written!" << std::endl;
 
 	return 0;
 }
